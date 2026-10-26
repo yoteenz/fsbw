@@ -1,0 +1,76 @@
+### CASE: staging correctly isolated
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · VITE_SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_ANON_KEY present · role claim anon · ref aaaaaaaaaaaaaaaaaaaa
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET present
+[env_guard] OK
+exit=0
+### CASE: staging pointed at PRODUCTION Supabase
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref hyycomvcaqxxvyrfupes
+  · VITE_SUPABASE_URL → project ref hyycomvcaqxxvyrfupes
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref hyycomvcaqxxvyrfupes
+  · SUPABASE_ANON_KEY present · role claim anon · ref hyycomvcaqxxvyrfupes
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (4 problems):
+  ✗ SUPABASE_URL points at the PRODUCTION project in a non-production environment
+  ✗ VITE_SUPABASE_URL points at the PRODUCTION project in a non-production environment
+  ✗ SUPABASE_SERVICE_ROLE_KEY belongs to a different project than the staging project
+  ✗ SUPABASE_ANON_KEY belongs to a different project than the staging project
+exit=1
+### CASE: staging holding LIVE Stripe keys
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · VITE_SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_ANON_KEY present · role claim anon · ref aaaaaaaaaaaaaaaaaaaa
+  · STRIPE_SECRET_KEY mode live · publishable mode live · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (1 problem):
+  ✗ Non-production environment holds Stripe LIVE keys
+exit=1
+### CASE: staging missing service-role key (would silently fall back to anon today)
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · VITE_SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_ANON_KEY present · role claim anon · ref aaaaaaaaaaaaaaaaaaaa
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (1 problem):
+  ✗ SUPABASE_SERVICE_ROLE_KEY is missing (server must fail closed, never fall back)
+exit=1
+### CASE: service-role token exposed via VITE_ variable
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · VITE_SUPABASE_URL → project ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref aaaaaaaaaaaaaaaaaaaa
+  · SUPABASE_ANON_KEY present · role claim anon · ref aaaaaaaaaaaaaaaaaaaa
+  · VITE_SUPABASE_ANON_KEY present · role claim service_role · ref aaaaaaaaaaaaaaaaaaaa
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (2 problems):
+  ✗ VITE_SUPABASE_ANON_KEY carries role "service_role", expected "anon"
+  ✗ VITE_SUPABASE_ANON_KEY: contains a service_role token — would ship to browsers
+exit=1
+### CASE: staging pointed at site00-staging
+[env_guard] APP_ENV=staging
+  · SUPABASE_URL → project ref soocqbyjkxeubfjnuwvf
+  · VITE_SUPABASE_URL → project ref soocqbyjkxeubfjnuwvf
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref soocqbyjkxeubfjnuwvf
+  · SUPABASE_ANON_KEY present · role claim anon · ref soocqbyjkxeubfjnuwvf
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (4 problems):
+  ✗ SUPABASE_URL points at site00-staging (SITE00-owned) — never valid for FRONTAL SLAYER
+  ✗ VITE_SUPABASE_URL points at site00-staging (SITE00-owned) — never valid for FRONTAL SLAYER
+  ✗ SUPABASE_SERVICE_ROLE_KEY belongs to a different project than the staging project
+  ✗ SUPABASE_ANON_KEY belongs to a different project than the staging project
+exit=1
+### CASE: production with TEST Stripe keys
+[env_guard] APP_ENV=production
+  · SUPABASE_URL → project ref hyycomvcaqxxvyrfupes
+  · VITE_SUPABASE_URL → project ref hyycomvcaqxxvyrfupes
+  · SUPABASE_SERVICE_ROLE_KEY present · role claim service_role · ref hyycomvcaqxxvyrfupes
+  · SUPABASE_ANON_KEY present · role claim anon · ref hyycomvcaqxxvyrfupes
+  · STRIPE_SECRET_KEY mode test · publishable mode test · STRIPE_WEBHOOK_SECRET missing
+[env_guard] REFUSING TO START (1 problem):
+  ✗ Production uses Stripe TEST keys
+exit=1

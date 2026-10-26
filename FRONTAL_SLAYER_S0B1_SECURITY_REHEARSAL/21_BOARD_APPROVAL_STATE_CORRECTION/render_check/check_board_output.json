@@ -1,0 +1,212 @@
+{
+  "phone-local": {
+    "errors": [],
+    "overflowX": false,
+    "states": {
+      "PENDING DECISION": 59,
+      "PENDING DECISION · BLOCKED": 4
+    },
+    "founderApprovedBadges": 0,
+    "manifest": {
+      "templateVersion": "4.0",
+      "status": "NO FOUNDER DECISION RECORDED",
+      "approvalRecorded": false,
+      "A1a": {
+        "id": "A1a",
+        "subject": "Rehearse the S0B-1 database containment (M1A, M2, M3) on staging",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "M1A, M2, M3 PREPARED; REHEARSED on an isolated local replica (2026-10-26). Staging NOT PROVISIONED.",
+        "verificationStatus": "LOCAL REPLICA: 31/31 attack tests blocked; 19/20 authorized workflows pass (REG-18 = pre-existing U-21); rollback exact. STAGING: BLOCKED. PRODUCTION: UNVERIFIED."
+      }
+    }
+  },
+  "desktop-local": {
+    "errors": [],
+    "overflowX": false,
+    "states": {
+      "PENDING DECISION": 59,
+      "PENDING DECISION · BLOCKED": 4
+    },
+    "founderApprovedBadges": 0,
+    "manifest": {
+      "templateVersion": "4.0",
+      "status": "NO FOUNDER DECISION RECORDED",
+      "approvalRecorded": false,
+      "A1a": {
+        "id": "A1a",
+        "subject": "Rehearse the S0B-1 database containment (M1A, M2, M3) on staging",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "M1A, M2, M3 PREPARED; REHEARSED on an isolated local replica (2026-10-26). Staging NOT PROVISIONED.",
+        "verificationStatus": "LOCAL REPLICA: 31/31 attack tests blocked; 19/20 authorized workflows pass (REG-18 = pre-existing U-21); rollback exact. STAGING: BLOCKED. PRODUCTION: UNVERIFIED."
+      }
+    }
+  },
+  "phone-owner": {
+    "errors": [],
+    "overflowX": false,
+    "states": {
+      "PENDING DECISION": 59,
+      "PENDING DECISION · BLOCKED": 4
+    },
+    "founderApprovedBadges": 0,
+    "recordButtonsInitiallyDisabled": {
+      "total": 59,
+      "disabled": 59
+    },
+    "selectDefault": "— Choose outcome —",
+    "afterSelect": {
+      "badge": "SELECTED — NOT RECORDED",
+      "btnDisabled": true
+    },
+    "afterOutcome": {
+      "badge": "SELECTED — NOT RECORDED",
+      "btnDisabled": false
+    },
+    "afterRecord": {
+      "badge": "FOUNDER APPROVED"
+    },
+    "manifest": {
+      "templateVersion": "4.0",
+      "status": "PARTIALLY RECORDED",
+      "recordedCount": 1,
+      "H3": {
+        "id": "H3",
+        "subject": "SITE00 shares the Supabase project",
+        "classification": "Engineering default",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": {
+          "option": "1",
+          "source": "recorded"
+        },
+        "recordedFounderDecision": {
+          "outcome": "FOUNDER APPROVED",
+          "option": "1",
+          "note": "",
+          "decidedBy": "owner-test",
+          "decidedAt": "2026-10-26T04:17:47.717Z"
+        },
+        "state": "FOUNDER APPROVED",
+        "executionAuthorization": "AUTHORIZED BY RECORD — this decision only; implementation still follows its sprint gates",
+        "implementationStatus": "Shared-database impact review done for M1A, M2, M3 (no SITE00 or JURNL dependency found).",
+        "verificationStatus": "UNVERIFIED (SITE00 owner smoke not run)."
+      },
+      "A1a": {
+        "id": "A1a",
+        "subject": "Rehearse the S0B-1 database containment (M1A, M2, M3) on staging",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "M1A, M2, M3 PREPARED; REHEARSED on an isolated local replica (2026-10-26). Staging NOT PROVISIONED.",
+        "verificationStatus": "LOCAL REPLICA: 31/31 attack tests blocked; 19/20 authorized workflows pass (REG-18 = pre-existing U-21); rollback exact. STAGING: BLOCKED. PRODUCTION: UNVERIFIED."
+      },
+      "A1b": {
+        "id": "A1b",
+        "subject": "Apply M1A, M2, M3 to production after the staging evidence",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION · BLOCKED",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "NOT APPLIED to production.",
+        "verificationStatus": "UNVERIFIED (requires the staging evidence pack)."
+      }
+    }
+  },
+  "desktop-owner": {
+    "errors": [],
+    "overflowX": false,
+    "states": {
+      "PENDING DECISION": 59,
+      "PENDING DECISION · BLOCKED": 4
+    },
+    "founderApprovedBadges": 0,
+    "recordButtonsInitiallyDisabled": {
+      "total": 59,
+      "disabled": 59
+    },
+    "selectDefault": "— Choose outcome —",
+    "afterSelect": {
+      "badge": "SELECTED — NOT RECORDED",
+      "btnDisabled": true
+    },
+    "afterOutcome": {
+      "badge": "SELECTED — NOT RECORDED",
+      "btnDisabled": false
+    },
+    "afterRecord": {
+      "badge": "FOUNDER APPROVED"
+    },
+    "manifest": {
+      "templateVersion": "4.0",
+      "status": "PARTIALLY RECORDED",
+      "recordedCount": 1,
+      "H3": {
+        "id": "H3",
+        "subject": "SITE00 shares the Supabase project",
+        "classification": "Engineering default",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": {
+          "option": "1",
+          "source": "recorded"
+        },
+        "recordedFounderDecision": {
+          "outcome": "FOUNDER APPROVED",
+          "option": "1",
+          "note": "",
+          "decidedBy": "owner-test",
+          "decidedAt": "2026-10-26T04:17:49.632Z"
+        },
+        "state": "FOUNDER APPROVED",
+        "executionAuthorization": "AUTHORIZED BY RECORD — this decision only; implementation still follows its sprint gates",
+        "implementationStatus": "Shared-database impact review done for M1A, M2, M3 (no SITE00 or JURNL dependency found).",
+        "verificationStatus": "UNVERIFIED (SITE00 owner smoke not run)."
+      },
+      "A1a": {
+        "id": "A1a",
+        "subject": "Rehearse the S0B-1 database containment (M1A, M2, M3) on staging",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "M1A, M2, M3 PREPARED; REHEARSED on an isolated local replica (2026-10-26). Staging NOT PROVISIONED.",
+        "verificationStatus": "LOCAL REPLICA: 31/31 attack tests blocked; 19/20 authorized workflows pass (REG-18 = pre-existing U-21); rollback exact. STAGING: BLOCKED. PRODUCTION: UNVERIFIED."
+      },
+      "A1b": {
+        "id": "A1b",
+        "subject": "Apply M1A, M2, M3 to production after the staging evidence",
+        "classification": "Founder decision",
+        "wave": 1,
+        "recommendation": "1",
+        "selectedOption": null,
+        "recordedFounderDecision": null,
+        "state": "PENDING DECISION · BLOCKED",
+        "executionAuthorization": "NOT AUTHORIZED — no recorded founder decision",
+        "implementationStatus": "NOT APPLIED to production.",
+        "verificationStatus": "UNVERIFIED (requires the staging evidence pack)."
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+rollback M3_ROLLBACK_restore_prior_function_bodies rc=0
+rollback M2_ROLLBACK_recreate_policies rc=0
+rollback M1A_ROLLBACK_restore_prior_grants rc=0
+reapply M1A_fs_value_rpc_execute_containment rc=0
+reapply M2_fs_legacy_customer_write_policies rc=0
+reapply M3_fs_hairstyle_analysis_pack_sizes rc=0
+second-run M1A_fs_value_rpc_execute_containment rc=0
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:24: NOTICE:  policy "Users can insert own orders" for relation "public.orders" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:25: NOTICE:  policy "Users can update own orders" for relation "public.orders" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:27: NOTICE:  policy "Users can insert own meetings" for relation "public.meetings" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:28: NOTICE:  policy "Users can update own meetings" for relation "public.meetings" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:29: NOTICE:  policy "Users can delete own meetings" for relation "public.meetings" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:31: NOTICE:  policy "Users can insert own notifications" for relation "public.notifications" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:32: NOTICE:  policy "Users can update own notifications" for relation "public.notifications" does not exist, skipping
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:34: NOTICE:  policy "Users can insert own reviews" for relation "public.reviews" does not exist, skipping
+second-run M2_fs_legacy_customer_write_policies rc=0
+second-run M3_fs_hairstyle_analysis_pack_sizes rc=0

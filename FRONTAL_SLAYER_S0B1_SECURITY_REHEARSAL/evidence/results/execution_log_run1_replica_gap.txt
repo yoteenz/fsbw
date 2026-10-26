@@ -1,0 +1,85 @@
+=== V0_PRECHECK_readonly.sql sha256:954578047f62ae2b exit:3 49ms
+   db    |              pg_version               |          checked_at           
+---------+---------------------------------------+-------------------------------
+ fs_post | 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) | 2026-10-26 04:00:46.994711+00
+(1 row)
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/V0_PRECHECK_readonly.sql:10: ERROR:  relation "supabase_migrations.schema_migrations" does not exist
+LINE 1: SELECT max(version) AS highest_applied FROM supabase_migrati...
+                                                    ^
+=== M1A_fs_value_rpc_execute_containment.sql sha256:e9e46e3f7fad3455 exit:0 60ms
+BEGIN
+DO
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+DO
+COMMIT
+=== M2_fs_legacy_customer_write_policies.sql sha256:1d10a7e7c4cca419 exit:3 51ms
+BEGIN
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M2_fs_legacy_customer_write_policies.sql:37: ERROR:  relation "public.psa_tool_events" does not exist
+=== M3_fs_hairstyle_analysis_pack_sizes.sql sha256:957e8a45d218c7b7 exit:0 57ms
+BEGIN
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+REVOKE
+GRANT
+GRANT
+COMMIT
+=== V1_POSTCHECK_and_STAGING_role_tests.sql sha256:a333f16f4cdb0f2b exit:0 45ms
+ still_exposed 
+---------------
+(0 rows)
+ service_role_lost 
+-------------------
+(0 rows)
+   tablename   |             policyname             |  cmd   
+---------------+------------------------------------+--------
+ meetings      | Users can delete own meetings      | DELETE
+ meetings      | Users can insert own meetings      | INSERT
+ meetings      | Users can update own meetings      | UPDATE
+ notifications | Users can insert own notifications | INSERT
+ notifications | Users can update own notifications | UPDATE
+ orders        | Users can insert own orders        | INSERT
+ orders        | Users can update own orders        | UPDATE
+ reviews       | Users can insert own reviews       | INSERT
+(8 rows)
+ select_policies 
+-----------------
+               5
+(1 row)
+   pack_check    
+-----------------
+ IN (1, 3, 4, 6)
+(1 row)
+ relname  |              tgname               |               proname                
+----------+-----------------------------------+--------------------------------------
+ users    | on_auth_user_created              | handle_new_user
+ profiles | trg_log_profile_changes           | log_profile_changes
+ profiles | profiles_guard_privileged_columns | profiles_preserve_privileged_columns
+(3 rows)

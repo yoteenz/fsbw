@@ -1,0 +1,472 @@
+<title>Frontal Slayer Architecture Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Covered+By+Your+Grace&display=swap">
+<style>
+/* Layout: marble ground, glass panels; three experience authorities shown side by side, never merged. */
+:root {
+  --bg: #f3f3f5; --vein: rgba(110,110,120,.07); --glass: rgba(255,255,255,.74); --glass-strong: rgba(255,255,255,.93);
+  --ink: #0b0b0c; --muted: #5f5f66; --gray: #808080; --line: rgba(11,11,12,.11);
+  --red: #eb1c24; --red-ink: #c4121a; --red-wash: rgba(235,28,36,.08);
+  --ok: #1d7a46; --ok-wash: rgba(29,122,70,.1); --warn: #8a5a00; --warn-wash: rgba(176,116,0,.12);
+  --mob: #6b4fa0; --mob-wash: rgba(107,79,160,.1); --dsk: #1f5f8b; --dsk-wash: rgba(31,95,139,.1); --adm: #5f5f66; --adm-wash: rgba(95,95,102,.1);
+  --chrome: linear-gradient(180deg,#fff 0%,#e4e4e8 48%,#f7f7f9 100%);
+  --shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 10px 30px rgba(20,20,30,.06);
+  --font-ui: "Futura PT","Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --font-hand: "Covered By Your Grace","Bradley Hand",cursive;
+  --font-mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0d0d0f; --vein:rgba(200,200,210,.05); --glass:rgba(26,26,30,.74); --glass-strong:rgba(30,30,34,.94);
+  --ink:#f1f1f3; --muted:#a6a6ad; --gray:#8c8c8c; --line:rgba(255,255,255,.12);
+  --red:#ff2d35; --red-ink:#ff5a60; --red-wash:rgba(255,45,53,.12); --ok:#4cc283; --ok-wash:rgba(76,194,131,.13); --warn:#e0a83a; --warn-wash:rgba(224,168,58,.14);
+  --mob:#b39ae6; --mob-wash:rgba(179,154,230,.13); --dsk:#79b8e3; --dsk-wash:rgba(121,184,227,.13); --adm:#b5b5bc; --adm-wash:rgba(181,181,188,.12);
+  --chrome:linear-gradient(180deg,#2a2a2f 0%,#18181b 50%,#232327 100%); --shadow:0 1px 0 rgba(255,255,255,.05) inset,0 10px 30px rgba(0,0,0,.35); color-scheme:dark; } }
+:root[data-theme="dark"] {
+  --bg:#0d0d0f; --vein:rgba(200,200,210,.05); --glass:rgba(26,26,30,.74); --glass-strong:rgba(30,30,34,.94);
+  --ink:#f1f1f3; --muted:#a6a6ad; --gray:#8c8c8c; --line:rgba(255,255,255,.12);
+  --red:#ff2d35; --red-ink:#ff5a60; --red-wash:rgba(255,45,53,.12); --ok:#4cc283; --ok-wash:rgba(76,194,131,.13); --warn:#e0a83a; --warn-wash:rgba(224,168,58,.14);
+  --mob:#b39ae6; --mob-wash:rgba(179,154,230,.13); --dsk:#79b8e3; --dsk-wash:rgba(121,184,227,.13); --adm:#b5b5bc; --adm-wash:rgba(181,181,188,.12);
+  --chrome:linear-gradient(180deg,#2a2a2f 0%,#18181b 50%,#232327 100%); --shadow:0 1px 0 rgba(255,255,255,.05) inset,0 10px 30px rgba(0,0,0,.35); color-scheme:dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background-color: var(--bg); background-image: linear-gradient(118deg,transparent 0 38%,var(--vein) 38.4%,transparent 39.2% 100%), linear-gradient(64deg,transparent 0 61%,var(--vein) 61.3%,transparent 62% 100%), linear-gradient(152deg,transparent 0 74%,var(--vein) 74.2%,transparent 74.8% 100%); background-attachment: fixed; color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+body::before { content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--glass-strong); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left,0px)); padding-right: max(16px, env(safe-area-inset-right,0px)); padding-block: 0 48px; }
+h1,h2,h3 { text-wrap: balance; margin: 0; font-weight: 500; }
+.label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.num { font-variant-numeric: tabular-nums; }
+button,select,input,textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.top { position: sticky; top: env(safe-area-inset-top,0px); z-index: 5; background: var(--glass-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top .wrap { padding-block: 14px 0; display: grid; gap: 10px; }
+.brandrow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; justify-content: space-between; }
+.brand h1 { font-size: clamp(18px,2.6vw,24px); letter-spacing: .22em; text-transform: uppercase; }
+.brand h1 b { color: var(--red); font-weight: 600; }
+.brand .sub { font-size: 13px; color: var(--muted); }
+.status { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 500; border: 1px solid var(--line); background: var(--glass); white-space: nowrap; }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray); }
+.pill.pending { color: var(--red-ink); background: var(--red-wash); border-color: transparent; } .pill.pending .dot { background: var(--red); }
+.pill.ok { color: var(--ok); background: var(--ok-wash); border-color: transparent; } .pill.ok .dot { background: var(--ok); }
+.pill.warn { color: var(--warn); background: var(--warn-wash); border-color: transparent; } .pill.warn .dot { background: var(--warn); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { border: 0; background: none; padding: 10px 12px 12px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; min-height: 44px; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--red); }
+main { padding-top: 22px; display: grid; gap: 22px; }
+.stack { display: grid; gap: 22px; }
+.panel { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; min-width: 0; }
+.panel > h2, .ph { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 12px; }
+.note { font-family: var(--font-hand); font-size: 20px; color: var(--red-ink); line-height: 1.2; }
+.muted { color: var(--muted); } .small { font-size: 13px; }
+.grid2 { display: grid; gap: 22px; } @media (min-width: 980px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+.grid3 { display: grid; gap: 16px; } @media (min-width: 1100px) { .grid3 { grid-template-columns: repeat(3, minmax(0,1fr)); align-items: start; } }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; } @media (min-width: 760px) { .stats { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+.stat { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--chrome); }
+.stat .v { font-size: 28px; font-weight: 500; line-height: 1.1; } .stat .k { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 500; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; } tr:last-child td { border-bottom: 0; }
+.chip { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 999px; padding: 4px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.tag { display: inline-block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); font-weight: 600; white-space: nowrap; }
+.tag.MOB { color: var(--mob); background: var(--mob-wash); border-color: transparent; }
+.tag.DSK { color: var(--dsk); background: var(--dsk-wash); border-color: transparent; }
+.tag.ADM { color: var(--adm); background: var(--adm-wash); border-color: transparent; }
+.tag.c1 { color: var(--red-ink); background: var(--red-wash); border-color: transparent; }
+.tag.c2 { color: var(--ok); background: var(--ok-wash); border-color: transparent; }
+.tag.c3 { color: var(--dsk); background: var(--dsk-wash); border-color: transparent; }
+.tag.c4 { color: var(--warn); background: var(--warn-wash); border-color: transparent; }
+.tag.OWN { color: var(--ok); background: var(--ok-wash); border-color: transparent; }
+.tag.HANDOFF { color: var(--warn); background: var(--warn-wash); border-color: transparent; }
+.tag.STATIC, .tag.COMING { border-style: dashed; }
+.tag.NONE { color: var(--red-ink); background: var(--red-wash); border-color: transparent; }
+.xp { border: 1px solid var(--line); border-radius: 14px; background: var(--glass-strong); padding: 14px; min-width: 0; }
+.xp h3 { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; display: flex; gap: 8px; align-items: center; }
+.xp .bar { height: 3px; border-radius: 2px; margin: 10px 0 12px; }
+.xp.MOB .bar { background: var(--mob); } .xp.DSK .bar { background: var(--dsk); } .xp.ADM .bar { background: var(--adm); }
+.grp { margin-top: 10px; } .grp > .label { margin-bottom: 4px; display: block; }
+.node { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 6px 8px; border-radius: 8px; border: 1px solid transparent; width: 100%; text-align: left; background: none; min-height: 40px; }
+.node:hover { border-color: var(--line); background: var(--glass); }
+.node .nm { font-size: 14px; font-weight: 500; min-width: 0; } .node .rt { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+.node.d1 { margin-left: 14px; }
+.cap { display: grid; gap: 8px; border-top: 1px solid var(--line); padding: 12px 0; } .cap:first-child { border-top: 0; }
+.caph { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; } .caph b { font-size: 15px; font-weight: 500; }
+.lanes { display: grid; gap: 8px; } @media (min-width: 900px) { .lanes { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+.lane { border-radius: 10px; padding: 8px 10px; font-size: 13px; min-width: 0; overflow-wrap: anywhere; }
+.lane.MOB { background: var(--mob-wash); } .lane.DSK { background: var(--dsk-wash); } .lane.ADM { background: var(--adm-wash); }
+.lane .label { display: block; margin-bottom: 2px; }
+.owner { font-size: 12.5px; color: var(--muted); }
+.dgrid { display: grid; gap: 12px; }
+.dcard { border: 1px solid var(--line); border-radius: 14px; background: var(--glass-strong); padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.dcard.s-APPROVED { border-color: var(--ok); }
+.dhead { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.did { font-family: var(--font-mono); font-size: 13px; color: var(--red-ink); font-weight: 600; } .dsub { font-size: 15.5px; font-weight: 500; flex: 1; min-width: 200px; }
+.state { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.state.RECOMMENDED { color: var(--muted); } .state.SELECTED { color: var(--warn); background: var(--warn-wash); border-color: transparent; }
+.state.APPROVED { color: #fff; background: var(--ok); border-color: transparent; } .state.REJECTED { color: #fff; background: var(--red); border-color: transparent; }
+.state.PENDING { color: var(--muted); border-color: var(--line); } .recnote { color: var(--muted); } .dact button[disabled] { opacity: .45; cursor: not-allowed; }
+.state.DEFERRED { color: var(--dsk); background: var(--dsk-wash); border-color: transparent; } .state.BLOCKED { color: var(--warn); border-color: var(--warn); border-style: dashed; }
+.opts { display: grid; gap: 6px; }
+.opt { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
+.opt.isrec { border-color: color-mix(in srgb, var(--red) 45%, transparent); background: var(--red-wash); }
+.opt.chosen { border-color: var(--ok); background: var(--ok-wash); }
+.opt input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--red); }
+.opt .oc { grid-column: 2; font-size: 12.5px; color: var(--muted); }
+.rec { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--red-ink); font-weight: 600; margin-left: 6px; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 16px; font-size: 13px; }
+.kv > div { min-width: 0; overflow-wrap: anywhere; }
+.dact { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dact select, .dact input { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 8px; padding: 6px 10px; min-height: 40px; }
+.dact input { flex: 1; min-width: 160px; }
+.primary { border: 0; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 8px 16px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; min-height: 40px; }
+.primary:disabled { opacity: .4; cursor: not-allowed; }
+.ghost { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 999px; padding: 6px 12px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; min-height: 36px; }
+.banner { border-radius: 12px; padding: 12px 14px; font-size: 14px; border: 1px solid var(--line); background: var(--glass-strong); }
+.banner.warn { background: var(--warn-wash); border-color: transparent; } .banner.ok { background: var(--ok-wash); border-color: transparent; }
+.recline { font-size: 13px; color: var(--ok); font-weight: 500; }
+.wavehead { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; margin: 6px 0 8px; }
+.wavehead h3 { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+.wavebox { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--glass); display: grid; gap: 6px; }
+.mig { display: grid; gap: 4px; border-top: 1px solid var(--line); padding: 10px 0; } .mig:first-child { border-top: 0; }
+textarea#manifest { width: 100%; min-height: 340px; font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--glass-strong); padding: 12px; resize: vertical; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (max-width: 560px) { .brand { min-width: 0; } .brand h1 { letter-spacing: .12em; font-size: 17px; overflow-wrap: anywhere; } .pill { white-space: normal; } .status { min-width: 0; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brandrow">
+      <div class="brand">
+        <h1>Frontal <b>Slayer</b> · Architecture</h1>
+        <div class="sub">Board V3.1 · approval-state correction · three experience authorities</div>
+      </div>
+      <div class="status">
+        <span class="pill pending"><span class="dot"></span>Pending founder approval</span>
+        <span class="pill" id="storePill"><span class="dot"></span><span id="storeText">Connecting decision store…</span></span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Board views">
+      <button class="tab" role="tab" data-view="overview">Overview</button>
+      <button class="tab" role="tab" data-view="experiences">Experiences</button>
+      <button class="tab" role="tab" data-view="capabilities">Shared capabilities</button>
+      <button class="tab" role="tab" data-view="decisions">Decisions</button>
+      <button class="tab" role="tab" data-view="security">Security</button>
+      <button class="tab" role="tab" data-view="sprints">Sprints</button>
+      <button class="tab" role="tab" data-view="export">Export</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap"><main>
+  <section data-panel="overview" class="stack">
+    <div class="panel">
+      <div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <h2 class="ph" style="margin:0">What needs you now</h2>
+        <span class="note">nothing here is approved until it is recorded</span>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h2>Wave 1: immediate decisions</h2><div id="wave1"></div></div>
+      <div class="panel"><h2>Experience authorities</h2>
+        <div class="small" style="display:grid;gap:10px">
+          <div><span class="tag MOB">Mobile</span> An independently designed phone experience. Marble single-column pages, menu toggle, PSA button.</div>
+          <div><span class="tag DSK">Desktop / Tablet</span> The immersive Frontal Slayer Tower: floors, rooms, elevator, perspective panels. Not a scaled-up mobile.</div>
+          <div><span class="tag ADM">Admin</span> A separate operational interface, protected by the Admin Alignment Protocol.</div>
+          <div class="muted">They share business records, server rules and APIs. They do not share UI.</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel"><h2>Decision triage of the 55 original decisions</h2><div class="tbl-wrap"><table><thead><tr><th>Classification</th><th>Count</th><th>Meaning</th></tr></thead><tbody id="triageSummary"></tbody></table></div></div>
+  </section>
+
+  <section data-panel="experiences" hidden>
+    <p class="small muted" style="margin:0 0 12px">Three separate trees. A page in one experience is never assumed to exist in another. Hand-offs from desktop/tablet into mobile pages are marked; they are decision XD-1.</p>
+    <div class="grid3" id="xptrees"></div>
+  </section>
+
+  <section data-panel="capabilities" hidden>
+    <div class="panel">
+      <div class="toolbar"><h2 class="ph" style="margin:0;flex:1">Shared capabilities: one record, separate presentations</h2>
+        <div class="chips" id="capFilter"></div></div>
+      <p class="small muted" style="margin:0 0 8px">Parity means business consistency, not visual equivalence. OWN = experience-native · HANDOFF = links into the other experience · STATIC = own visual, placeholder data · COMING = declared, not built · NONE = no presence.</p>
+      <div id="caps"></div>
+    </div>
+  </section>
+
+  <section data-panel="decisions" hidden>
+    <div class="stack" style="gap:14px">
+      <div class="banner" id="decBanner"></div>
+      <div class="toolbar">
+        <div class="chips" id="waveChips"></div>
+        <div class="chips" id="catChips"></div>
+      </div>
+      <div id="dlist" class="stack" style="gap:18px"></div>
+    </div>
+  </section>
+
+  <section data-panel="security" hidden class="stack">
+    <div class="panel"><h2>S0B-1 database containment readiness</h2><div id="migs"></div></div>
+    <div class="grid2">
+      <div class="panel"><h2>Critical risks (all open)</h2><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Risk</th><th>Confidence</th><th>Containment</th><th>Approval</th></tr></thead><tbody id="crit"></tbody></table></div></div>
+      <div class="panel"><h2>Outstanding evidence</h2><div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Evidence needed</th><th>Blocks</th></tr></thead><tbody id="evid"></tbody></table></div></div>
+    </div>
+  </section>
+
+  <section data-panel="sprints" hidden>
+    <div class="panel"><h2>Sprint gates and dependencies</h2><div class="tbl-wrap"><table><thead><tr><th>Sprint</th><th>Experience</th><th>Founder decisions</th><th>Recorded</th><th>Other gates</th><th>State</th></tr></thead><tbody id="sprints"></tbody></table></div></div>
+  </section>
+
+  <section data-panel="export" hidden>
+    <div class="panel" style="display:grid;gap:12px">
+      <h2 class="ph" style="margin:0">Approval manifest export</h2>
+      <p class="small muted" style="margin:0">Manifest v4. Each decision separates six fields: <code>recommendation</code>, <code>selectedOption</code>, <code>recordedFounderDecision</code>, <code>executionAuthorization</code>, <code>implementationStatus</code> and <code>verificationStatus</code>. Only <code>recordedFounderDecision</code> (saved by the artifact owner and read back from the decision store) is an approval. A recommendation or an on-screen selection never is. The export becomes the repository record only when it is committed.</p>
+      <div class="dact"><button class="primary" id="copyManifest">Copy manifest</button><button class="ghost" id="saveManifest" hidden>Save as JSON</button><span class="small muted" id="exportMsg" role="status"></span></div>
+      <textarea id="manifest" readonly aria-label="Manifest JSON"></textarea>
+    </div>
+  </section>
+</main></div>
+
+<script>
+/*__DATA__*/
+</script>
+<script>
+(function () {
+  const A = window.S0A, X = window.S0AX;
+  const $ = (s) => document.querySelector(s);
+  const el = (tag, attrs, ...kids) => { const n = document.createElement(tag); if (attrs) for (const [k, v] of Object.entries(attrs)) { if (v == null || v === false) continue; if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? '' : v); } for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c))); return n; };
+  const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+  const byId = Object.fromEntries(A.triage.map(d => [d.id, d]));
+  const CATSHORT = { 1: 'Founder decision', 2: 'Engineering default', 3: 'Already established', 4: 'Blocked by evidence' };
+  const STATUS_TO_STATE = { APPROVED: 'FOUNDER APPROVED', REJECTED: 'FOUNDER REJECTED', DEFERRED: 'DEFERRED' };
+
+  // ---- decision records (owner-only writes) ----
+  let records = {}, mode = 'connecting', db = null, me = null;
+  const selected = ls.get('fs-arch-v3-selected', {}); // device-only, never authority
+  const items = A.triage.concat(X.extraApprovals); // A1a / A1b appear as their own approvals
+  const itemById = Object.fromEntries(items.map(d => [d.id, d]));
+  // Default control state is PENDING DECISION. A recommendation or an on-screen selection is never an approval:
+  // FOUNDER APPROVED / REJECTED / DEFERRED come only from records read back from the decision store.
+  const PENDING = 'PENDING DECISION';
+  const pick = {}; // per-card working state (selection + outcome) before recording
+  const liveSel = d => (pick[d.id] && pick[d.id].selection) || selected[d.id] || null;
+  function stateOf(d) {
+    const r = records[d.id];
+    if (r && STATUS_TO_STATE[r.status]) return STATUS_TO_STATE[r.status];
+    if (liveSel(d)) return 'SELECTED — NOT RECORDED';
+    return d.state === 'BLOCKED' ? PENDING + ' · BLOCKED' : PENDING;
+  }
+  const stateClass = s => s.startsWith('FOUNDER APPROVED') ? 'APPROVED' : s.startsWith('FOUNDER REJECTED') ? 'REJECTED' : s.startsWith('SELECTED') ? 'SELECTED' : s.includes('BLOCKED') ? 'BLOCKED' : s.startsWith('PENDING') ? 'PENDING' : s.split(' ')[0];
+  function setStore(t, c) { $('#storeText').textContent = t; $('#storePill').className = 'pill ' + (c || ''); }
+
+  // ---- views ----
+  const views = ['overview', 'experiences', 'capabilities', 'decisions', 'security', 'sprints', 'export'];
+  let view = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'overview';
+  function show(v) { view = v; document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== v); document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === v))); if (v === 'export') renderExport(); try { history.replaceState(null, '', '#' + v); } catch (e) {} }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => show(t.dataset.view)));
+
+  // ---- overview ----
+  function renderOverview() {
+    const c = A.counts, rec = Object.keys(records).filter(k => itemById[k]).length;
+    const stats = [[c.original, 'Original decisions (all accounted for)'], [c.genuineFounder, 'Genuine founder decisions'], [c.engineeringDefaults, 'Engineering defaults'], [c.alreadyEstablished, 'Already established'], [c.blockedByEvidence, 'Blocked by evidence'], [X.critical.length, 'Critical risks (open)'], ['3 / 4', 'Candidate migrations ready / total'], [rec + ' / ' + items.length, 'Decisions recorded']];
+    $('#stats').replaceChildren(...stats.map(([v, k]) => el('div', { class: 'stat' }, el('div', { class: 'v num', text: v }), el('div', { class: 'k', text: k }))));
+    const w1 = ['A1a', 'A1b', 'H2', 'H3'].map(id => itemById[id]).filter(Boolean);
+    $('#wave1').replaceChildren(...w1.map(d => el('div', { style: 'display:flex;gap:10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line)' },
+      el('button', { class: 'did', style: 'border:0;background:none;padding:0', onclick: () => openDecision(d.id), text: d.id }),
+      el('span', { style: 'flex:1;min-width:0' }, d.subject), el('span', { class: 'state ' + stateClass(stateOf(d)), text: stateOf(d) }))),
+      el('p', { class: 'small muted', style: 'margin:10px 0 0' }, 'Also needed, as an operator action rather than a decision: the service-role key check (U-01). No keys in chat.'));
+    const meaning = { 1: 'Needs the founder\'s judgement (brand, CX, pricing, rewards, policy, production risk)', 2: 'Settled by architecture or standard practice; listed so the founder can object', 3: 'A historical founder directive already settles it (evidence cited)', 4: 'Cannot be decided until configuration or data is inspected' };
+    $('#triageSummary').replaceChildren(...[1, 2, 3, 4].map(k => el('tr', null, el('td', null, el('span', { class: 'tag c' + k, text: CATSHORT[k] })), el('td', { class: 'num', text: A.triage.filter(d => d.origin.startsWith('V2') && d.cat === k).length }), el('td', { text: meaning[k] }))),
+      el('tr', null, el('td', { text: 'Carried forward / new' }), el('td', { class: 'num', text: '3 + 3' }), el('td', { text: 'D14–D16 (dropped by V2, never deleted) · XD-1–XD-3 (experience authority)' })));
+  }
+
+  // ---- experiences ----
+  function nodeBtn(name, route, tags, depth) { return el('div', { class: 'node' + (depth ? ' d1' : '') }, el('span', { class: 'nm', text: name }), el('span', null, tags.map(t => el('span', { class: 'tag ' + t.c, text: t.t }))), el('span', { class: 'rt', text: route })); }
+  function renderExperiences() {
+    const mob = el('div', { class: 'xp MOB' }, el('h3', null, el('span', { class: 'tag MOB', text: 'Mobile' }), 'Customer'), el('div', { class: 'bar' }),
+      el('div', { class: 'small muted', text: '≤767px everywhere; tablets on landing and /account/* children (XD-2). Shell: marble page + menu toggle + PSA button.' }),
+      ...X.mobileGroups.map(g => el('div', { class: 'grp' }, el('span', { class: 'label', text: g.family }), g.items.map(p => nodeBtn(p.name, p.route, p.tags, p.depth)))));
+    const dsk = el('div', { class: 'xp DSK' }, el('h3', null, el('span', { class: 'tag DSK', text: 'Desktop / Tablet' }), 'Customer'), el('div', { class: 'bar' }),
+      el('div', { class: 'small muted', text: '≥1024px landing; ≥768px account, sign-in and Tower routes. Shell: NavBar + elevator + rooms + perspective panels.' }),
+      ...X.desktopGroups.map(g => el('div', { class: 'grp' }, el('span', { class: 'label', text: g.title }), g.items.map(p => nodeBtn(p.name, p.route, p.tags, p.depth)))));
+    const adm = el('div', { class: 'xp ADM' }, el('h3', null, el('span', { class: 'tag ADM', text: 'Admin' }), 'Operations'), el('div', { class: 'bar' }),
+      el('div', { class: 'small muted', text: '448px column at every width; Admin Alignment Protocol (every page finalized unless named).' }),
+      ...X.adminGroups.map(g => el('div', { class: 'grp' }, el('span', { class: 'label', text: g.family }), g.items.map(p => nodeBtn(p.name, p.route, p.tags, p.depth)))));
+    $('#xptrees').replaceChildren(mob, dsk, adm);
+  }
+
+  // ---- capabilities ----
+  let capF = 'all';
+  const kinds = ['all', 'OWN', 'HANDOFF', 'STATIC', 'COMING', 'NONE'];
+  function renderCaps() {
+    $('#capFilter').replaceChildren(...kinds.map(k => el('button', { class: 'chip', 'aria-pressed': String(capF === k), onclick: () => { capF = k; renderCaps(); } }, k === 'all' ? 'All' : 'Desktop ' + k)));
+    const list = A.parity.filter(p => capF === 'all' || p.dsk.split(' ')[0] === capF);
+    $('#caps').replaceChildren(...list.map(p => el('div', { class: 'cap' },
+      el('div', { class: 'caph' }, el('span', { class: 'did', text: p.id }), el('b', { text: p.cap }), el('span', { class: 'tag ' + p.dsk.split(' ')[0], text: 'Desktop ' + p.dsk.split(' ')[0] })),
+      el('div', { class: 'lanes' },
+        el('div', { class: 'lane MOB' }, el('span', { class: 'label', text: 'Mobile · ' + p.mobS }), p.mob),
+        el('div', { class: 'lane DSK' }, el('span', { class: 'label', text: 'Desktop/Tablet · ' + p.dskS }), p.dsk),
+        el('div', { class: 'lane ADM' }, el('span', { class: 'label', text: 'Admin · ' + p.admS }), p.adm)),
+      el('div', { class: 'owner' }, el('b', { text: 'One record: ' }), p.owner, ' · now: ', p.src, ' · ', p.impl, ' · founder: ', p.founder, p.note ? ' · ' + p.note : ''))));
+  }
+
+  // ---- decisions ----
+  let waveF = 'all', catF = 'all';
+  const waveNames = { 1: 'Wave 1', 2: 'Wave 2', 3: 'Wave 3', 4: 'Wave 4', 5: 'Wave 5', 0: 'No wave' };
+  function renderFilters() {
+    $('#waveChips').replaceChildren(...['all', 1, 2, 3, 4, 5, 0].map(w => el('button', { class: 'chip', 'aria-pressed': String(waveF === w), onclick: () => { waveF = w; renderFilters(); renderDecisions(); } }, w === 'all' ? 'All waves' : waveNames[w])));
+    $('#catChips').replaceChildren(...['all', 1, 2, 3, 4].map(c => el('button', { class: 'chip', 'aria-pressed': String(catF === c), onclick: () => { catF = c; renderFilters(); renderDecisions(); } }, c === 'all' ? 'All types' : CATSHORT[c])));
+  }
+  function banner() {
+    const b = $('#decBanner');
+    if (mode === 'owner') { b.className = 'banner ok'; b.textContent = 'You are the artifact owner. Every decision starts as PENDING DECISION. Choosing an option shows SELECTED — NOT RECORDED. Nothing is approved until you choose an outcome, press Record decision, and the decision store confirms the record; only then does the card show FOUNDER APPROVED, FOUNDER REJECTED or DEFERRED. A recommendation is never an approval. Approving one wave approves nothing else.'; }
+    else if (mode === 'readonly') { b.className = 'banner'; b.textContent = 'Read-only. Only the artifact owner can record decisions. A selection you make here stays SELECTED — NOT RECORDED.'; }
+    else if (mode === 'local') { b.className = 'banner warn'; b.textContent = 'The decision store is not available in this view. Selections are kept on this device as SELECTED — NOT RECORDED and never count as approval.'; }
+    else { b.className = 'banner'; b.textContent = 'Connecting to the decision store…'; }
+  }
+  function renderDecisions() {
+    banner();
+    const pass = d => (waveF === 'all' || d.wave === waveF) && (catF === 'all' || d.cat === catF);
+    const blocks = [];
+    for (const w of [1, 2, 3, 4, 5, 0]) {
+      if (waveF !== 'all' && waveF !== w) continue;
+      const ds = items.filter(d => d.wave === w && pass(d));
+      if (!ds.length) continue;
+      const meta = X.waveMeta[w];
+      blocks.push(el('div', null, el('div', { class: 'wavehead' }, el('h3', { text: meta.title }), el('span', { class: 'small muted', text: meta.scope })), el('div', { class: 'dgrid' }, ds.map(card))));
+    }
+    $('#dlist').replaceChildren(...(blocks.length ? blocks : [el('p', { class: 'muted', text: 'No decisions match the filters.' })]));
+  }
+  function refreshCard(d) {
+    const st = stateOf(d), b = document.querySelector('#dec-' + d.id + ' .dhead .state');
+    if (b) { b.textContent = st; b.className = 'state ' + stateClass(st); }
+    const w = pick[d.id], btn = document.getElementById('rb-' + d.id);
+    if (btn) btn.disabled = !(w && w.selection && w.status);
+    renderOverview(); renderSprints();
+  }
+  function card(d) {
+    const r = records[d.id], st = stateOf(d);
+    const w = pick[d.id] || (pick[d.id] = { selection: r ? r.selection : (selected[d.id] || null), status: r ? r.status : '', note: r ? r.note || '' : '' });
+    const canRecord = mode === 'owner' && d.state !== 'BLOCKED';
+    const name = 'o-' + d.id;
+    return el('article', { class: 'dcard' + (r ? ' s-' + r.status : ''), id: 'dec-' + d.id },
+      el('div', { class: 'dhead' }, el('span', { class: 'did', text: d.id }), el('span', { class: 'dsub', text: d.subject }), el('span', { class: 'tag c' + d.cat, text: CATSHORT[d.cat] }), el('span', { class: 'state ' + stateClass(st), text: st })),
+      d.current ? el('div', { class: 'small' }, el('span', { class: 'label', text: 'Now  ' }), d.current) : null,
+      el('div', { class: 'small' }, el('span', { class: 'label', text: 'Proposed disposition  ' }), d.disposition),
+      el('div', { class: 'small recnote' }, el('span', { class: 'label', text: 'Recommendation  ' }), d.originalRec ? 'Option ' + d.originalRec + ' — a recommendation, not an approval' : 'None'),
+      el('div', { class: 'opts', role: 'radiogroup', 'aria-label': d.id + ' options' }, (d.options || []).map(o => {
+        const id = name + '-' + o.key;
+        return el('label', { class: 'opt' + (o.key === d.originalRec ? ' isrec' : '') + (r && r.selection === o.key ? ' chosen' : ''), for: id },
+          el('input', { type: 'radio', name, id, value: o.key, checked: w.selection === o.key, disabled: d.state === 'BLOCKED', onchange: () => { w.selection = o.key; if (mode !== 'owner') { selected[d.id] = o.key; ls.set('fs-arch-v3-selected', selected); } refreshCard(d); } }),
+          el('span', null, el('b', { text: o.key + '. ' }), o.label, o.key === d.originalRec ? el('span', { class: 'rec', text: 'Recommended' }) : null), el('span', { class: 'oc', text: o.consequence || '' }));
+      })),
+      el('div', { class: 'kv' }, el('div', null, el('span', { class: 'label', text: 'Why' }), el('div', { text: d.reason || '—' })), el('div', null, el('span', { class: 'label', text: 'Evidence / authority' }), el('div', { text: d.authority || d.evidence || '—' })), el('div', null, el('span', { class: 'label', text: 'Depends on' }), el('div', { text: (d.deps || []).join(', ') || '—' })), el('div', null, el('span', { class: 'label', text: 'Gate' }), el('div', { text: d.impl || d.gate || '—' })), el('div', null, el('span', { class: 'label', text: 'V2 recommendation' }), el('div', { text: d.v2 || '—' }))),
+      r ? el('div', { class: 'recline', text: 'Recorded: option ' + r.selection + ' · ' + STATUS_TO_STATE[r.status] + ' · ' + new Date(r.decidedAt).toLocaleString() + (r.note ? ' · “' + r.note + '”' : '') }) : null,
+      canRecord ? el('div', { class: 'dact' },
+        el('select', { id: 'st-' + d.id, 'aria-label': 'Outcome', onchange: e => { w.status = e.target.value; refreshCard(d); } }, [el('option', { value: '', selected: !w.status, text: '— Choose outcome —' })].concat([['APPROVED', 'Approve'], ['REJECTED', 'Reject'], ['DEFERRED', 'Defer']].map(([v, t]) => el('option', { value: v, selected: w.status === v, text: t })))),
+        el('input', { id: 'nt-' + d.id, type: 'text', placeholder: 'Note (optional)', value: w.note, 'aria-label': 'Note', oninput: e => { w.note = e.target.value; } }),
+        el('button', { class: 'primary', id: 'rb-' + d.id, disabled: !(w.selection && w.status), onclick: e => record(d, w, e.currentTarget) }, r ? 'Record change' : 'Record decision'),
+        r ? el('button', { class: 'ghost', onclick: () => clearRec(d) }, 'Clear record') : null,
+        el('span', { class: 'small muted', role: 'status', id: 'msg-' + d.id })) : null);
+  }
+  async function record(d, w, btn) {
+    const m = $('#msg-' + d.id);
+    if (!w.selection || !w.status) { m.textContent = 'Choose an option and an outcome first.'; return; }
+    btn.disabled = true; m.textContent = 'Recording…';
+    try { await db.doc('decisions/' + d.id).set({ id: d.id, selection: w.selection, status: w.status, note: w.note || '', decidedBy: me, decidedAt: new Date().toISOString(), recommendation: d.originalRec || null, boardVersion: '3.1' }); m.textContent = 'Saved. Waiting for the store to confirm.'; }
+    catch (e) { btn.disabled = false; m.textContent = 'Not recorded: ' + ((e && e.code === 'invalid_argument') ? 'this account cannot write decisions.' : (e && e.message) || 'the store refused the write.'); }
+  }
+  async function clearRec(d) { try { await db.doc('decisions/' + d.id).delete(); delete pick[d.id]; } catch (e) { const m = $('#msg-' + d.id); if (m) m.textContent = 'Could not clear: ' + ((e && e.message) || 'refused'); } }
+  function openDecision(id) { waveF = 'all'; catF = 'all'; renderFilters(); renderDecisions(); show('decisions'); const n = document.getElementById('dec-' + id); if (n) n.scrollIntoView({ block: 'start' }); }
+
+  // ---- security ----
+  function renderSecurity() {
+    $('#migs').replaceChildren(...X.migrations.map(m => el('div', { class: 'mig' }, el('div', { class: 'dhead' }, el('span', { class: 'did', text: m.id }), el('span', { class: 'dsub', text: m.title }), el('span', { class: 'state ' + (m.status === 'BLOCKED' ? 'BLOCKED' : 'RECOMMENDED'), text: m.status })), el('div', { class: 'small', text: m.detail }), el('div', { class: 'small muted', text: 'Closes: ' + m.closes + ' · SITE00 impact: ' + m.site00 + ' · Gate: ' + m.gate })),
+      el('p', { class: 'small muted', style: 'margin:8px 0 0' }, 'Not executed in production or staging. Rehearsed on an isolated local replica on 2026-10-26: after M1A + M2 + M3, 31 of 31 attack tests were blocked and 19 of 20 authorized workflows passed (the one failure, U-21, predates the migrations); rollback restored the exact prior catalog. Staging rehearsal is BLOCKED until A1a, H2 and H3 are recorded. A local PASS does not mean production is fixed. Live state (read-only, 2026-10-26): 17 SECURITY DEFINER functions executable by anon; 8 legacy customer write policies; the pack check accepts 1, 3 and 6.')));
+    $('#crit').replaceChildren(...X.critical.map(r => el('tr', null, el('td', { class: 'num', text: r.id }), el('td', { text: r.risk }), el('td', { text: r.conf }), el('td', { text: r.containment }), el('td', { text: r.approval }))));
+    $('#evid').replaceChildren(...X.evidence.map(r => el('tr', null, el('td', { class: 'num', text: r.id }), el('td', { text: r.what }), el('td', { text: r.blocks }))));
+  }
+
+  // ---- sprints ----
+  function renderSprints() {
+    $('#sprints').replaceChildren(...X.sprints.map(s => { const n = s.founder.filter(id => records[id]).length; return el('tr', null, el('td', { class: 'num', text: s.id }), el('td', { text: s.xp }), el('td', null, el('div', { class: 'chips' }, s.founder.map(id => el('button', { class: 'chip', onclick: () => openDecision(id), text: id + (records[id] && records[id].status === 'APPROVED' ? ' ✓' : '') })))), el('td', { class: 'num', text: s.founder.length ? n + ' / ' + s.founder.length : '—' }), el('td', { text: s.other }), el('td', { text: s.state })); }));
+  }
+
+  // ---- export ----
+  const IMPL = {
+    A1a: 'M1A, M2, M3 PREPARED; REHEARSED on an isolated local replica (2026-10-26). Staging NOT PROVISIONED.',
+    A1b: 'NOT APPLIED to production.',
+    H2: 'Staging configuration PREPARED; NOT PROVISIONED.',
+    H3: 'Shared-database impact review done for M1A, M2, M3 (no SITE00 or JURNL dependency found).'
+  };
+  const VERIF = {
+    A1a: 'LOCAL REPLICA: 31/31 attack tests blocked; 19/20 authorized workflows pass (REG-18 = pre-existing U-21); rollback exact. STAGING: BLOCKED. PRODUCTION: UNVERIFIED.',
+    A1b: 'UNVERIFIED (requires the staging evidence pack).',
+    H2: 'UNVERIFIED (no staging exists).',
+    H3: 'UNVERIFIED (SITE00 owner smoke not run).'
+  };
+  const approved = id => !!(records[id] && records[id].status === 'APPROVED');
+  function execAuth(d) {
+    const r = records[d.id];
+    if (!r) return 'NOT AUTHORIZED — no recorded founder decision';
+    if (r.status !== 'APPROVED') return 'NOT AUTHORIZED — recorded as ' + STATUS_TO_STATE[r.status];
+    if (d.id === 'A1a') return approved('H2') && approved('H3') ? 'AUTHORIZED — staging rehearsal only; production requires A1b' : 'NOT YET AUTHORIZED — H2 and H3 must also be recorded as approved';
+    if (d.id === 'A1b') return approved('A1a') ? 'CONDITIONAL — valid only with the attached staging evidence pack' : 'NOT AUTHORIZED — requires A1a recorded as approved and staging evidence';
+    return 'AUTHORIZED BY RECORD — this decision only; implementation still follows its sprint gates';
+  }
+  function buildManifest() {
+    const recorded = Object.keys(records).filter(k => itemById[k]);
+    return { templateVersion: '4.0', exportedAt: new Date().toISOString(), exportedFrom: 'Architecture board V3.1', status: recorded.length ? 'PARTIALLY RECORDED' : 'NO FOUNDER DECISION RECORDED', approvalRecorded: recorded.length > 0, recordedCount: recorded.length,
+      legend: {
+        recommendation: 'Engineering recommendation. Never an approval.',
+        selectedOption: 'Option chosen on screen. Not an approval unless recordedFounderDecision is set.',
+        recordedFounderDecision: 'Decision saved by the artifact owner in the board decision store and read back. The only approval source.',
+        executionAuthorization: 'What the recorded decisions permit now, including dependencies (A1b needs A1a plus staging evidence).',
+        implementationStatus: 'Engineering progress. Independent of approval.',
+        verificationStatus: 'Test evidence by environment. A local or staging PASS does not mean production is fixed.'
+      },
+      counts: A.counts,
+      decisions: items.map(d => { const r = records[d.id], sel = r ? r.selection : liveSel(d); return { id: d.id, subject: d.subject, classification: CATSHORT[d.cat], wave: d.wave,
+        recommendation: d.originalRec || null,
+        selectedOption: sel ? { option: sel, source: r ? 'recorded' : 'on screen — not recorded' } : null,
+        recordedFounderDecision: r ? { outcome: STATUS_TO_STATE[r.status], option: r.selection, note: r.note || '', decidedBy: r.decidedBy || null, decidedAt: r.decidedAt } : null,
+        state: stateOf(d),
+        executionAuthorization: execAuth(d),
+        implementationStatus: IMPL[d.id] || 'NOT STARTED',
+        verificationStatus: VERIF[d.id] || 'UNVERIFIED' }; }) };
+  }
+  function renderExport() { $('#manifest').value = JSON.stringify(buildManifest(), null, 2); }
+  $('#copyManifest').addEventListener('click', () => { renderExport(); const t = $('#manifest'); const done = ok => { $('#exportMsg').textContent = ok ? 'Copied.' : 'Copy is blocked here. The text is selected: copy it with your keyboard.'; if (!ok) { t.focus(); t.select(); } }; try { navigator.clipboard.writeText(t.value).then(() => done(true), () => done(false)); } catch (e) { done(false); } });
+
+  function renderAll() { renderOverview(); renderExperiences(); renderCaps(); renderFilters(); renderDecisions(); renderSecurity(); renderSprints(); if (view === 'export') renderExport(); }
+  renderAll(); show(view);
+
+  (async () => {
+    const claude = window.claude;
+    if (!claude || !claude.use) { mode = 'local'; setStore('Decision store unavailable · selections not recorded', 'warn'); renderAll(); return; }
+    try {
+      const [d, u, dl] = await Promise.all([claude.use('db'), claude.use('user'), claude.use('downloads').catch(() => null)]);
+      if (dl) { const b = $('#saveManifest'); b.hidden = false; b.addEventListener('click', async () => { renderExport(); try { await dl.save({ filename: 'APPROVAL_MANIFEST.export.json', data: $('#manifest').value }); $('#exportMsg').textContent = 'Saved.'; } catch (e) { $('#exportMsg').textContent = e && e.code === 'declined' ? 'Save cancelled.' : 'Saving is unavailable here. Use Copy instead.'; } }); }
+      if (!d) { mode = 'local'; setStore('Decision store unavailable · selections not recorded', 'warn'); renderAll(); return; }
+      db = d; const owner = u ? await u.isOwner() : false; me = u && owner ? await u.id() : null;
+      mode = owner ? 'owner' : 'readonly';
+      setStore(owner ? 'Owner · recording enabled' : 'Read-only · recorded decisions shown', owner ? 'ok' : '');
+      db.collection('decisions').onSnapshot(snap => {
+        const next = {};
+        snap.docs.forEach(doc => { const v = doc.data(); if (v && itemById[doc.id] && v.selection && v.decidedAt && STATUS_TO_STATE[v.status]) next[doc.id] = v; });
+        records = next;
+        for (const k of Object.keys(pick)) if (!records[k]) delete pick[k];
+        renderAll();
+      }, () => setStore('Decision store disconnected · reload to retry', 'warn'));
+      renderAll();
+    } catch (e) { mode = 'local'; setStore('Decision store unavailable · selections not recorded', 'warn'); renderAll(); }
+  })();
+})();
+</script>

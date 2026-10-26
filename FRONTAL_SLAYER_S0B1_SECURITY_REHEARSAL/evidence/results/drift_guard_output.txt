@@ -1,0 +1,2 @@
+psql:/home/user/fsbw/FRONTAL_SLAYER_S0A_S0B1_READINESS/10_CANDIDATE_MIGRATIONS/M1A_fs_value_rpc_execute_containment.sql:45: ERROR:  S0B1-M1A precondition failed: public.hairstyle_analysis_refund_consume(uuid,text) not found
+CONTEXT:  PL/pgSQL function inline_code_block line 19 at RAISE

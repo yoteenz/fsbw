@@ -1,0 +1,1 @@
+U-21 log check 2026-10-26: 0 matching errors in last 24h; total log volume edge_logs=10, postgres_logs=9 (near-zero traffic) => not evidence either way

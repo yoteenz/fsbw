@@ -1,0 +1,128 @@
+FN armor a45f37224c831b79e0dfc3d8c6feb4e0
+FN armor a45f37224c831b79e0dfc3d8c6feb4e0
+FN crypt ea9cb21d4668638c79f471dc607df1b4
+FN dearmor 698d71f03c675ff58762990312109ea6
+FN decrypt fa3fd67f1c168f498eab6165f27bdb1b
+FN decrypt_iv 00048a7838901c86900226f25d8fd1ef
+FN digest 926ba3fbdb45dc078b3e3cafddc392cc
+FN digest 926ba3fbdb45dc078b3e3cafddc392cc
+FN encrypt a865200e3e17395d9b3774d4e7a19832
+FN encrypt_iv 17a521e43efce20dd4703e9d243d4f4d
+FN gen_random_bytes 393a992bef3cadec88b224bd3dace51c
+FN gen_random_uuid b2825f0b165931d2f718b16cd4dc7cb1
+FN gen_salt 1ceb3513947cb5b72265001042040f51
+FN gen_salt 83471500bcebc23b61302a74e64e0613
+FN hairstyle_analysis_grant_purchase_credits ec785023b78bd332a50d0b4f99fe7368
+FN hairstyle_analysis_refund_consume daf73a9f24aef37524018b5c8968c9b2
+FN hairstyle_analysis_try_consume ba20b15b1fa0a7898dcff8e69c5268aa
+FN handle_new_user 716d859029a1377d828b124c94eeddbb
+FN hmac 439ec46f1dc8e4c4b39837540788374e
+FN hmac 439ec46f1dc8e4c4b39837540788374e
+FN log_profile_changes d77beaf33fec99d6da2ec62768d5441b
+FN lounge_engagement_ensure_summary 8b28199eec000e9d2a2503e1f94f62fa
+FN lounge_engagement_recount_summary e9fcc7ac6d3a35025b2dd88aaf1d4ce4
+FN lounge_record_qualified_view cf001638b9f3898df112e647e0ce4865
+FN lounge_toggle_helpful 3472e01b8e255ef741bf731a6de52915
+FN pgp_armor_headers 3954d7fda83ff251e09f7301df4decfe
+FN pgp_key_id 4b72a26a9f6422f60ea2f6d4f053e2be
+FN pgp_pub_decrypt dd08bd1c245bc68b737103263d12bf24
+FN pgp_pub_decrypt dd08bd1c245bc68b737103263d12bf24
+FN pgp_pub_decrypt dd08bd1c245bc68b737103263d12bf24
+FN pgp_pub_decrypt_bytea 7e9d4fce9c6b6c044e314c928d957e9d
+FN pgp_pub_decrypt_bytea 7e9d4fce9c6b6c044e314c928d957e9d
+FN pgp_pub_decrypt_bytea 7e9d4fce9c6b6c044e314c928d957e9d
+FN pgp_pub_encrypt 7472cedacad809d059f35b3823e16d62
+FN pgp_pub_encrypt 7472cedacad809d059f35b3823e16d62
+FN pgp_pub_encrypt_bytea fb27931d690d0cbd38dfc1d2269d8167
+FN pgp_pub_encrypt_bytea fb27931d690d0cbd38dfc1d2269d8167
+FN pgp_sym_decrypt 00337fc8a344a450412a6e8501b90406
+FN pgp_sym_decrypt 00337fc8a344a450412a6e8501b90406
+FN pgp_sym_decrypt_bytea ae33cd2d0dea9f8d3899631bdfcc3bcc
+FN pgp_sym_decrypt_bytea ae33cd2d0dea9f8d3899631bdfcc3bcc
+FN pgp_sym_encrypt a911e6ce3232c550abbafb7ba5c13d70
+FN pgp_sym_encrypt a911e6ce3232c550abbafb7ba5c13d70
+FN pgp_sym_encrypt_bytea f5f1ad766d41dae19429bb6d8a8bc093
+FN pgp_sym_encrypt_bytea f5f1ad766d41dae19429bb6d8a8bc093
+FN profiles_preserve_privileged_columns 36305186943b989ff50599363347c1a0
+FN psa_consume_watch_if_qualified a67b775109aeb208671d9f6a212d26f2
+FN psa_try_consume_message c99d07af646f480a3e28de3196652ccc
+POLICY consult_quotes Users read own consult quotes SELECT (auth.uid() = user_id) 
+POLICY lounge_engagement_comments lounge_engagement_comments_insert_own INSERT  ((auth.uid() = user_id) AND (status = 'visible'::text) AND (is_official = false) AND (is_pinned = false))
+POLICY lounge_engagement_comments lounge_engagement_comments_select_visible SELECT ((status = 'visible'::text) OR (auth.uid() = user_id)) 
+POLICY lounge_engagement_comments lounge_engagement_comments_update_own UPDATE (auth.uid() = user_id) ((auth.uid() = user_id) AND (is_official = false) AND (is_pinned = false))
+POLICY lounge_engagement_helpful lounge_engagement_helpful_delete_own DELETE (auth.uid() = user_id) 
+POLICY lounge_engagement_helpful lounge_engagement_helpful_insert_own INSERT  (auth.uid() = user_id)
+POLICY lounge_engagement_helpful lounge_engagement_helpful_select_all SELECT true 
+POLICY lounge_engagement_qualified_views lounge_engagement_qv_select_none SELECT false 
+POLICY lounge_engagement_summaries lounge_engagement_summaries_select_all SELECT true 
+POLICY meetings Users can delete own meetings DELETE (auth.uid() = user_id) 
+POLICY meetings Users can insert own meetings INSERT  (auth.uid() = user_id)
+POLICY meetings Users can read own meetings SELECT (auth.uid() = user_id) 
+POLICY meetings Users can update own meetings UPDATE (auth.uid() = user_id) 
+POLICY membership_payments Users read own membership payments SELECT (auth.uid() = user_id) 
+POLICY notifications Users can insert own notifications INSERT  (auth.uid() = user_id)
+POLICY notifications Users can read own notifications SELECT (auth.uid() = user_id) 
+POLICY notifications Users can update own notifications UPDATE (auth.uid() = user_id) 
+POLICY orders Users can insert own orders INSERT  (auth.uid() = user_id)
+POLICY orders Users can read own orders SELECT (auth.uid() = user_id) 
+POLICY orders Users can update own orders UPDATE (auth.uid() = user_id) 
+POLICY orders orders_select_own SELECT (auth.uid() = user_id) 
+POLICY profiles Users can insert own profile INSERT  (auth.uid() = id)
+POLICY profiles Users can read own profile SELECT (auth.uid() = id) 
+POLICY profiles Users can update own profile UPDATE (auth.uid() = id) 
+POLICY profiles profiles_insert_own INSERT  (auth.uid() = id)
+POLICY profiles profiles_select_own SELECT (auth.uid() = id) 
+POLICY profiles profiles_update_own UPDATE (auth.uid() = id) (auth.uid() = id)
+POLICY psa_episode_entitlements psa_episode_entitlements_select_own SELECT (auth.uid() = user_id) 
+POLICY psa_watch_sessions psa_watch_sessions_select_own SELECT (auth.uid() = user_id) 
+POLICY reviews Users can insert own reviews INSERT  (auth.uid() = user_id)
+POLICY reviews Users can read own reviews SELECT (auth.uid() = user_id) 
+POLICY slay_ticket_transactions slay_ticket_transactions_select_own SELECT (auth.uid() = user_id) 
+armor(bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+armor(bytea,text[],text[]) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+crypt(text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+dearmor(text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+decrypt(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+decrypt_iv(bytea,bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+digest(bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+digest(text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+encrypt(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+encrypt_iv(bytea,bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+gen_random_bytes(integer) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+gen_salt(text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+gen_salt(text,integer) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+hairstyle_analysis_grant_purchase_credits(uuid,text,integer[]) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+hairstyle_analysis_refund_consume(uuid,text,text,integer) =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+hairstyle_analysis_try_consume(uuid,text,integer) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+handle_new_user() =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+hmac(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+hmac(text,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+log_profile_changes() anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+lounge_engagement_ensure_summary(text,text) =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+lounge_engagement_recount_summary(text,text) =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+lounge_record_qualified_view(text,text,integer,integer,uuid,text) =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+lounge_toggle_helpful(text,text,uuid) =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_armor_headers(text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_key_id(bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt(bytea,bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt(bytea,bytea,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt_bytea(bytea,bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt_bytea(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_decrypt_bytea(bytea,bytea,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_encrypt(text,bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_encrypt(text,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_encrypt_bytea(bytea,bytea) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_pub_encrypt_bytea(bytea,bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_decrypt(bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_decrypt(bytea,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_decrypt_bytea(bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_decrypt_bytea(bytea,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_encrypt(text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_encrypt(text,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_encrypt_bytea(bytea,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+pgp_sym_encrypt_bytea(bytea,text,text) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+profiles_preserve_privileged_columns() =X/postgres anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+psa_consume_watch_if_qualified(uuid,uuid) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+psa_try_consume_message(uuid,text,text,integer,integer) anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres
+public.gen_random_uuid() anon=X/postgres authenticated=X/postgres postgres=X/postgres service_role=X/postgres

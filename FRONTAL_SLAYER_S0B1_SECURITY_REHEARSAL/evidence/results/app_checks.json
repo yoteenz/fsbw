@@ -1,0 +1,25 @@
+{
+ "R-03": {
+  "bawLine": {
+   "fullyResolved": true,
+   "lines": [
+    {
+     "key": "line-0",
+     "description": "NOIR",
+     "quantity": 1,
+     "amountCents": 74000,
+     "resolved": true
+    }
+   ]
+  },
+  "stockLine": {}
+ },
+ "R-05": {
+  "purchasedFromClientLines": 600
+ },
+ "WEBHOOK_SIGNATURE": {
+  "validSignatureAccepted": true,
+  "tamperedPayload": "rejected",
+  "wrongSecret": "rejected"
+ }
+}

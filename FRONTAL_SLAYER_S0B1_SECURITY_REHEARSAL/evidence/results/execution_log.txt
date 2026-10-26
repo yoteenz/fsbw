@@ -1,0 +1,119 @@
+=== V0_PRECHECK_readonly.sql sha256:954578047f62ae2b exit:0 43ms
+   db    |              pg_version               |          checked_at           
+---------+---------------------------------------+-------------------------------
+ fs_post | 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) | 2026-10-26 04:01:09.723344+00
+(1 row)
+ highest_applied 
+-----------------
+(1 row)
+                                fn                                 | security_definer | anon_exec | auth_exec | service_exec |                                               acl                                                
+-------------------------------------------------------------------+------------------+-----------+-----------+--------------+--------------------------------------------------------------------------------------------------
+ hairstyle_analysis_grant_purchase_credits(uuid,text,integer[])    | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres
+ hairstyle_analysis_refund_consume(uuid,text,text,integer)         | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ hairstyle_analysis_try_consume(uuid,text,integer)                 | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres
+ hairstyle_analysis_refund_consume(uuid,text)                      | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres
+ handle_new_user()                                                 | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ lounge_engagement_ensure_summary(text,text)                       | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ lounge_engagement_recount_summary(text,text)                      | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ lounge_record_qualified_view(text,text,integer,integer,uuid,text) | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ lounge_toggle_helpful(text,text,uuid)                             | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ profiles_preserve_privileged_columns()                            | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres =X/postgres
+ psa_consume_watch_if_qualified(uuid,uuid)                         | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres
+ psa_try_consume_message(uuid,text,text,integer,integer)           | t                | t         | t         | t            | postgres=X/postgres anon=X/postgres authenticated=X/postgres service_role=X/postgres
+(12 rows)
+   tablename   |             policyname             |  cmd   
+---------------+------------------------------------+--------
+ meetings      | Users can delete own meetings      | DELETE
+ meetings      | Users can insert own meetings      | INSERT
+ meetings      | Users can update own meetings      | UPDATE
+ notifications | Users can insert own notifications | INSERT
+ notifications | Users can update own notifications | UPDATE
+ orders        | Users can insert own orders        | INSERT
+ orders        | Users can update own orders        | UPDATE
+ reviews       | Users can insert own reviews       | INSERT
+(8 rows)
+  pack_check  
+--------------
+ IN (1, 3, 6)
+(1 row)
+ relname  |              tgname               |               proname                | prosecdef 
+----------+-----------------------------------+--------------------------------------+-----------
+ users    | on_auth_user_created              | handle_new_user                      | t
+ profiles | trg_log_profile_changes           | log_profile_changes                  | f
+ profiles | profiles_guard_privileged_columns | profiles_preserve_privileged_columns | t
+(3 rows)
+ analysis_grants | order_rows | meeting_rows 
+-----------------+------------+--------------
+               0 |          2 |            1
+(1 row)
+=== M1A_fs_value_rpc_execute_containment.sql sha256:e9e46e3f7fad3455 exit:0 42ms
+BEGIN
+DO
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+REVOKE
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+DO
+COMMIT
+=== M2_fs_legacy_customer_write_policies.sql sha256:1d10a7e7c4cca419 exit:0 40ms
+BEGIN
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+DROP POLICY
+ALTER TABLE
+DO
+COMMIT
+=== M3_fs_hairstyle_analysis_pack_sizes.sql sha256:957e8a45d218c7b7 exit:0 38ms
+BEGIN
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+REVOKE
+GRANT
+GRANT
+COMMIT
+=== V1_POSTCHECK_and_STAGING_role_tests.sql sha256:a333f16f4cdb0f2b exit:0 40ms
+ still_exposed 
+---------------
+(0 rows)
+ service_role_lost 
+-------------------
+(0 rows)
+ tablename | policyname | cmd 
+-----------+------------+-----
+(0 rows)
+ select_policies 
+-----------------
+               5
+(1 row)
+   pack_check    
+-----------------
+ IN (1, 3, 4, 6)
+(1 row)
+ relname  |              tgname               |               proname                
+----------+-----------------------------------+--------------------------------------
+ users    | on_auth_user_created              | handle_new_user
+ profiles | trg_log_profile_changes           | log_profile_changes
+ profiles | profiles_guard_privileged_columns | profiles_preserve_privileged_columns
+(3 rows)
